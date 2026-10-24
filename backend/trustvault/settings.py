@@ -61,7 +61,11 @@ if os.getenv("DB_ENGINE", "sqlite").lower() == "postgres":
         "HOST": os.getenv("POSTGRES_HOST", "127.0.0.1"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
         "CONN_MAX_AGE": 60,
-        "OPTIONS": {"sslmode": "require"},
+        "OPTIONS": {
+    "sslmode": "disable"
+    if os.getenv("POSTGRES_HOST", "127.0.0.1") in ("127.0.0.1", "localhost")
+    else "require"
+},
     }}
 else:
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
@@ -83,10 +87,13 @@ MEDIA_ROOT = BASE_DIR / "private_uploads"
 MEDIA_URL = None  # Never expose uploaded documents through a public media URL.
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "10"))
 
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://trustvault-ashy.vercel.app",
 ]
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
